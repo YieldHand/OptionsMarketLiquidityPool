@@ -4,12 +4,12 @@ A liquidity pool that provides dynamic underlying assets for option contract mar
 
 ## Problem
 
-One of the biggest issues in DeFi-based options markets is the lack of liquidity in any given strike price range with a variable expiry date. Options are not commonly traded because buyers are not able to find sellers and vice versa. To solve this problem with in the direct swaps market, Uniswap employed automated market makers (AMMs) which could fill the orderbook gaps. However, this is non-existent in DeFi-based options markets.
+One of the biggest issues in DeFi-based options markets is the lack of liquidity for any given strike price and desired expiry date. Options are not commonly traded because buyers are not able to find sellers and vice versa. Previously, to solve this problem in the direct swaps market, Uniswap employed automated market makers (AMMs) which could fill the orderbook gaps for desired orders. However, this type of dynamic making of markets is non-existent in DeFi-based options markets.
 
 
 ## Solution
 
-To solve this liquidity issue in options markets, we are taking a similar approach that Uniswap made with the automated market maker model. Liquidity is added to pools which whitelist various tokens and provide liquidity on-demand from options market smart contracts to fill option purchase market orders. These options markets have their own direct liquidity for specific strike prices and expiration dates; however, when there is not enough liquidity there, a call is made to this projects' liquidity pools which provide the opposite side of the trade for an enhanced premium, giving the buyer exposure to their desired option while collecting premiums as rewards for providing the whitelisted underlying to the liquidity providers of the option liquidity pools.
+To solve this liquidity issue in options markets, we are taking a similar approach that Uniswap took with the automated market maker model. Liquidity is added to pools which whitelist various tokens (underlying) and provide liquidity on-demand from attached options market smart contract requests to fill option purchase market orders. These options markets have their own direct liquidity for specific strike prices and expiration dates; however, when there is not enough liquidity to fill an order, a call is made to this projects' liquidity pools which provide the opposite side of the trade for an enhanced premium, giving the options buyer exposure to their desired option terms while collecting premiums as rewards for providing the whitelisted underlying tokens for the trade to the liquidity providers of the option liquidity pools.
 
 
 
@@ -39,7 +39,7 @@ Further, current liquidity pools do not take advantage of diversification and DA
 
 ## What's Next?
 
- We are currently working to add comprehensive tests to this report. Additionally, we are working to add tokenization of the LP Pools so that LP positions can be tokenized and traded on platforms such as Pendle and APWine for fixed yield.
+ We are currently working to add comprehensive tests to this project. Additionally, we are working to add tokenization of the LP Pools so that LP positions can be traded on platforms such as Pendle and APWine for fixed yield.
 
 
 
