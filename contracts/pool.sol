@@ -142,6 +142,10 @@ contract LiquidityPool is  ReentrancyGuard {
         uint256 swapRate;
         return swapRate;
     }
+    function updateOwnerDAO(address newDAO) public onlyOwner returns(bool){
+        owner = newDAO;
+        return true;
+    }
 
     //Swaps a token using the best route... ETH->DAI or ETH->USDC->DAI to get the best reate for the user.
     function  swapForAmount(address theDepositToken, address tokenAddress, uint256 amountOutputToken) public returns (uint256){
