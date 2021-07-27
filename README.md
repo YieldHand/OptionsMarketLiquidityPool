@@ -42,7 +42,11 @@ Further, current liquidity pools do not take advantage of diversification and DA
  We are currently working to add comprehensive tests to this project. Additionally, we are working to add tokenization of the LP Pools so that LP positions can be traded on platforms such as Pendle and APWine for fixed yield.
 
 
-
 ## Contribute
 
 We welcome you to contribute to this codebase by forking this project and submitting pull requests to the `develop` branch. For any questions, comments, or suggestions, we encourage you to reach us in our Discord: https://discord.gg/7fApFnA6qW
+
+### Development And test environment
+
+- use nvm to manage the npm version. If you don't want to use nvm, the supported npm version is in .nvmrc file.
+- package.json defines libraries versions used by the project
