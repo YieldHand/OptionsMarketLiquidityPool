@@ -162,4 +162,17 @@ contract LiquidityPool is  ReentrancyGuard {
            return false;
        }
     }
+
+    // allow transfer of "amount" from one user "sender" to another user "recipient"
+    function transfer(address sender, address recipient, uint amount) public returns (bool){
+        IERC20 token = IERC20(depositToken);
+        require(poolOwnerBalance[sender] >= amount,"Insufficient funds");
+        require(recipient != address(0));
+        token.transferFrom(sender, recipient, amount);
+        poolOwnerBalance[sender] -= amount;
+        poolOwnerBalance[recipient] += amount;
+        return true;
+
+        emit Transfer(sender, recipient, amount);
+    }
 }
