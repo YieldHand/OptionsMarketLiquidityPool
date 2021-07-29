@@ -38,7 +38,9 @@ contract LiquidityPool is  ReentrancyGuard {
     uint256 public poolTotalDeposits = 0;
 
     //The token (usually a stablecoin such as DAI that is accepted as a deposit to contribute to a user's poolOwnerBalance)
-    address public depositToken = address(0x0);
+    // address public depositToken = address(0x0);
+    IERC20 private _depositToken;
+
 
     //The options market contract that is allowed to request the liquidity of this pool to it if it follows the rule fo the pool
     address public optionsMarketContract = address(0x0);
@@ -60,8 +62,8 @@ contract LiquidityPool is  ReentrancyGuard {
         owner= msg.sender;
     }
     //Token that can be received as a deposit by LPs
-    function setDepositToken(address tokenAddress) public onlyOwner{
-       address depositToken = tokenAddress;
+    function setDepositToken(IERC20 token) public onlyOwner{
+       _depositToken = token;
     }
     //date by which deposits can be withdrawn with rewards
     function setWithdrawDate(uint256 date) public onlyOwner returns (bool){
@@ -79,8 +81,7 @@ contract LiquidityPool is  ReentrancyGuard {
 
     //User deposits and becomes and LP
     function deposit(uint256 amount) public payable returns(bool){
-       IERC20 dToken = IERC20(depositToken);
-       require(dToken.transferFrom(msg.sender, address(this), amount), "You must have the balance of the deposit token and have approved this contract before doing this");
+       require(_depositToken.transferFrom(msg.sender, address(this), amount), "You must have the balance of the deposit token and have approved this contract before doing this");
        poolTotalDeposits = poolTotalDeposits.add(amount);
        poolTotalValue = poolTotalValue.add(amount);
        poolOwnerBalance[msg.sender] = poolOwnerBalance[msg.sender].add(amount);
@@ -90,10 +91,9 @@ contract LiquidityPool is  ReentrancyGuard {
     //User withdraws their tokens after the expiration date of the pool
     function withdraw(uint256 amount) public returns (bool){
         require(allLPsCanWithdraw, "allLPsCanWithdraw must be set to true for LPs to withdraw");
-        IERC20 token = IERC20(depositToken);
         uint256 userPercentageOfDeposits = poolOwnerBalance[msg.sender].mul(1000).div(poolTotalDeposits);
         uint256 amountOutputTokensEntitledTo = poolTotalValue.mul(userPercentageOfDeposits);
-        token.transfer(msg.sender, userPercentageOfDeposits);
+        _depositToken.transfer(msg.sender, userPercentageOfDeposits);
         poolOwnerBalance[msg.sender] = poolOwnerBalance[msg.sender].sub(amount);
         poolTotalValue = poolTotalValue.sub(amount);
         return true;
@@ -120,24 +120,23 @@ contract LiquidityPool is  ReentrancyGuard {
     }
 
     //OptionsMarket calls this function to get capital to create sell orders for someones options purchase order, setting the premium based on rules of the pool
-    function provideCapitalForOptionOrder(address tokenAddress, uint256 amountOutputToken) public{
+    function provideCapitalForOptionOrder(IERC20 token, uint256 amountOutputToken) public{
         require(msg.sender == optionsMarketContract, "only the authorized options market can make requests to this contract for liquidity");
-        bool authorized= isWhitelistedToken(tokenAddress);
+        bool authorized= isWhitelistedToken(token);
         require(authorized, "This token is not authorized for this pool");
 
-        if(tokenAddress != depositToken){
-            uint calculatedInputAmount = swapRate(depositToken, tokenAddress, amountOutputToken);
+        if(token != _depositToken){
+            uint calculatedInputAmount = swapRate(_depositToken, token, amountOutputToken);
             uint256 percentageOfTotalDeposits = calculatedInputAmount.mul(1000).div(poolTotalValue);
             require(percentageOfTotalDeposits <= maxPercentageCapitalForAnyPosition, "This amount of liquidity cannot be provided for a single transaction");
-            uint256 outputAmount= swapForAmount(depositToken, tokenAddress, amountOutputToken);
+            uint256 outputAmount= swapForAmount(_depositToken, token, amountOutputToken);
         }
-        IERC20 token = IERC20(tokenAddress);
         token.transfer(optionsMarketContract, amountOutputToken);
         emit CapitalProvided(optionsMarketContract, amountOutputToken);
     }
 
     //Gets the chainlink and/or uniswap rate for a token (Should not be suseptible to flash attacks, therefore best from a trusted oracle)
-    function swapRate(address tokenFromAddress, address tokenToAddress, uint256 amount) view public returns (uint256){
+    function swapRate(IERC20 tokenFrom, IERC20 tokenTo, uint256 amount) view public returns (uint256){
         //gets rate from external AMM or chainlink, then returns
         uint256 swapRate;
         return swapRate;
@@ -148,14 +147,14 @@ contract LiquidityPool is  ReentrancyGuard {
     }
 
     //Swaps a token using the best route... ETH->DAI or ETH->USDC->DAI to get the best reate for the user.
-    function  swapForAmount(address theDepositToken, address tokenAddress, uint256 amountOutputToken) public returns (uint256){
+    function  swapForAmount(IERC20 theDepositToken, IERC20 token, uint256 amountOutputToken) public returns (uint256){
         //Price discovery and swap to needed token occurs here
         return amountOutputToken;
     }
 
     //informs the contract or a user quering whether a token can be leveraged to facilitate a sell order of an option to accomodate a buy  being made in the market
-    function isWhitelistedToken(address tokenAddress) public view returns(bool){
-       if(tokenAddressWhitelisted[tokenAddress] == true){
+    function isWhitelistedToken(IERC20 token) public view returns(bool){
+       if(tokenAddressWhitelisted[address(token)] == true){
            return true;
        }
        else{

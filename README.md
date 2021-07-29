@@ -50,3 +50,21 @@ We welcome you to contribute to this codebase by forking this project and submit
 
 - use nvm to manage the npm version. If you don't want to use nvm, the supported npm version is in .nvmrc file.
 - package.json defines libraries versions used by the project
+
+#### Available commands
+
+- build
+
+```npm run build```
+
+- compile
+
+```npm run compile```
+
+- migrate
+
+```npm run migrate```
+
+- test
+
+```npm run test```
