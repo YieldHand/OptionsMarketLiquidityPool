@@ -42,6 +42,11 @@ contract LiquidityPool is  ReentrancyGuard {
     bool allLPsCanWithdraw = true;
     //Event triggered for Graph and users on Etherscan/ other explorers to track
     event CapitalProvided(address optionsMarketAddress, uint256 amount);
+
+    //LP Pool Deposit token events
+    event Transfer(address from, address to, uint256 tokens);
+    event Approval(address approver, address spender, uint256 amount);
+
     //Set creator as owner initially
     constructor()  payable {
         owner= msg.sender;
@@ -72,7 +77,7 @@ contract LiquidityPool is  ReentrancyGuard {
        return true;
     }
     function calculatePercentage(uint256 _amount) internal view returns(uint) {
-      uint256 userPercent=(((_amount.mul(percScale)).div(100)).mul(poolTotalDeposits)); 
+      uint256 userPercent=(((_amount.mul(percScale)).div(100)).mul(poolTotalDeposits));
       return userPercent;
     }
     //User withdraws their tokens after the expiration date of the pool
@@ -149,10 +154,10 @@ contract LiquidityPool is  ReentrancyGuard {
     function approve(address spender,uint256 amount) public returns (bool){
         IERC20 token = IERC20(depositToken);
         token.approve(spender, amount);
-        emit Approval(msg.sender,spender, amount);
+        emit Approval(msg.sender, spender, amount);
         return true;
-    } 
-    
+    }
+
     // @dev transsfer Moves `amount` tokens from the caller's account to `recipient`.
     function transfer(address recipient, uint amount) public returns (bool){
         IERC20 token = IERC20(depositToken);
@@ -161,19 +166,21 @@ contract LiquidityPool is  ReentrancyGuard {
         token.transferFrom(msg.sender, recipient, amount);
         poolOwnerBalance[msg.sender] = poolOwnerBalance[msg.sender].add(amount);
         poolOwnerBalance[recipient] = poolOwnerBalance[recipient].sub(amount);
-        return true;
         emit Transfer (msg.sender, recipient, amount);
+        return true;
+
     }
 
     // @dev transferfrom Moves `amount` tokens from `sender` to `recipient`,
-    function transferfrom(address sender, address recipient, uint amount) public returns (bool){
+    function transferFrom(address sender, address recipient, uint amount) public returns (bool){
         IERC20 token = IERC20(depositToken);
         require(poolOwnerBalance[sender] >= amount,"Insufficient funds");
         require(recipient != address(0), "This address does not exist");
         token.transferFrom(sender, recipient, amount);
         poolOwnerBalance[sender] = poolOwnerBalance[sender].add(amount);
         poolOwnerBalance[recipient] = poolOwnerBalance[recipient].sub(amount);
-        return true;
         emit Transfer (sender, recipient, amount);
+        return true;
+
     }
 }
