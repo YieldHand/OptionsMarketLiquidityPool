@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //WARNING: Psuedo-code/Draft Phase... Do NOT USE THIS IN PRODUCTION. The current version of this contract is essentially pseudo code containing major functionality that will be edited to be operational by community
 pragma solidity >=0.8.0 <0.9.0;
 pragma experimental ABIEncoderV2;
@@ -21,6 +22,7 @@ contract LiquidityPool is  ReentrancyGuard {
     }
     //allow deposits of ETH
     fallback() external payable { }
+    receive() external payable { }
 
     //mapping of each user's balance in the pool, similar to ERC20 balanceOf
     mapping (address=> uint256) public poolOwnerBalance;
@@ -58,8 +60,8 @@ contract LiquidityPool is  ReentrancyGuard {
     event CapitalProvided(address optionsMarketAddress, uint256 amount);
 
     //Set creator as owner initially
-    constructor() public payable {
-        owner= msg.sender;
+    constructor() payable {
+        owner = msg.sender;
     }
     //Token that can be received as a deposit by LPs
     function setDepositToken(IERC20 token) public onlyOwner{
@@ -92,7 +94,7 @@ contract LiquidityPool is  ReentrancyGuard {
     function withdraw(uint256 amount) public returns (bool){
         require(allLPsCanWithdraw, "allLPsCanWithdraw must be set to true for LPs to withdraw");
         uint256 userPercentageOfDeposits = poolOwnerBalance[msg.sender].mul(1000).div(poolTotalDeposits);
-        uint256 amountOutputTokensEntitledTo = poolTotalValue.mul(userPercentageOfDeposits);
+        // uint256 amountOutputTokensEntitledTo = poolTotalValue.mul(userPercentageOfDeposits);
         _depositToken.transfer(msg.sender, userPercentageOfDeposits);
         poolOwnerBalance[msg.sender] = poolOwnerBalance[msg.sender].sub(amount);
         poolTotalValue = poolTotalValue.sub(amount);
@@ -129,14 +131,14 @@ contract LiquidityPool is  ReentrancyGuard {
             uint calculatedInputAmount = swapRate(_depositToken, token, amountOutputToken);
             uint256 percentageOfTotalDeposits = calculatedInputAmount.mul(1000).div(poolTotalValue);
             require(percentageOfTotalDeposits <= maxPercentageCapitalForAnyPosition, "This amount of liquidity cannot be provided for a single transaction");
-            uint256 outputAmount= swapForAmount(_depositToken, token, amountOutputToken);
+            // uint256 outputAmount = swapForAmount(_depositToken, token, amountOutputToken);
         }
         token.transfer(optionsMarketContract, amountOutputToken);
         emit CapitalProvided(optionsMarketContract, amountOutputToken);
     }
 
     //Gets the chainlink and/or uniswap rate for a token (Should not be suseptible to flash attacks, therefore best from a trusted oracle)
-    function swapRate(IERC20 tokenFrom, IERC20 tokenTo, uint256 amount) view public returns (uint256){
+    function swapRate(IERC20 tokenFrom, IERC20 tokenTo, uint256 amount) pure public returns (uint256){
         //gets rate from external AMM or chainlink, then returns
         uint256 swapRate;
         return swapRate;
@@ -147,7 +149,7 @@ contract LiquidityPool is  ReentrancyGuard {
     }
 
     //Swaps a token using the best route... ETH->DAI or ETH->USDC->DAI to get the best reate for the user.
-    function  swapForAmount(IERC20 theDepositToken, IERC20 token, uint256 amountOutputToken) public returns (uint256){
+    function  swapForAmount(IERC20 theDepositToken, IERC20 token, uint256 amountOutputToken) pure public returns (uint256){
         //Price discovery and swap to needed token occurs here
         return amountOutputToken;
     }
