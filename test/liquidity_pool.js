@@ -18,7 +18,7 @@ contract('LiquidityPool tests', async ([alice, bob, admin, dev, minter]) => {
         assert.equal(balance, 10, "should have 10 here");
     });
 
-    it('should instanciate pool with a token', async () => {
+    it('ensure alice can make a deposit of 5 token', async () => {
         // Set token as deposit token
         this.pool.setDepositToken(this.token.address, {from: bob});
 
