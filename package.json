@@ -1,0 +1,32 @@
+{
+  "name": "optionsmarketliquiditypool",
+  "version": "1.0.0",
+  "description": "A liquidity pool that provides dynamic underlying assets for option contract market orders on-demand and distributes premiums to pool members",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build": "truffle build",
+    "compile": "truffle compile",
+    "migrate": "truffle migrate",
+    "test": "truffle test --stacktrace",
+    "test_debug": "truffle test --debug"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YieldHand/OptionsMarketLiquidityPool.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/YieldHand/OptionsMarketLiquidityPool/issues"
+  },
+  "homepage": "https://github.com/YieldHand/OptionsMarketLiquidityPool#readme",
+  "dependencies": {
+    "truffle": "^5.4.2"
+  },
+  "devDependencies": {
+    "@openzeppelin/contracts": "^4.2.0"
+  }
+}
