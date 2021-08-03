@@ -11,7 +11,8 @@
     "compile": "truffle compile",
     "migrate": "truffle migrate",
     "test": "truffle test --stacktrace",
-    "test_debug": "truffle test --debug"
+    "test_debug": "truffle test --debug",
+    "solhint": "./node_modules/.bin/solhint -f table contracts/**/*.sol"
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,7 @@
     "truffle": "^5.4.2"
   },
   "devDependencies": {
-    "@openzeppelin/contracts": "^4.2.0"
+    "@openzeppelin/contracts": "^4.2.0",
+    "solhint": "^3.3.6"
   }
 }
