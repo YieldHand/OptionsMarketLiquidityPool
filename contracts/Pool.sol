@@ -117,9 +117,9 @@ contract LiquidityPool is ReentrancyGuard {
         uint256 amountOutputTokensEntitledTo = (
             poolTotalValue.mul(userPercentageOfDeposits)
         ).div(percScale);
-        _depositToken.transfer(msg.sender, amountOutputTokensEntitledTo);
         poolOwnerBalance[msg.sender] = poolOwnerBalance[msg.sender].sub(amount);
         poolTotalValue = poolTotalValue.sub(amount);
+        _depositToken.transfer(msg.sender, amountOutputTokensEntitledTo);
         return true;
     }
 
