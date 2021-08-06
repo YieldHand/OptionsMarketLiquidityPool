@@ -97,10 +97,7 @@ contract LiquidityPool is ReentrancyGuard {
         view
         returns (uint256)
     {
-        uint256 userPercent = (
-            ((_amount.mul(percScale)).div(100)).mul(poolTotalDeposits)
-        );
-        return userPercent;
+        return ((_amount.mul(percScale)).mul(100).div(poolTotalDeposits));
     }
 
     //User withdraws their tokens after the expiration date of the pool
@@ -109,16 +106,15 @@ contract LiquidityPool is ReentrancyGuard {
             allLPsCanWithdraw,
             "allLPsCanWithdraw must be set to true for LPs to withdraw"
         );
-        //percentage in 1e18
-        uint256 userPercentageOfDeposits = calculatePercentage(
-            poolOwnerBalance[msg.sender]
+        uint256 userPercentageOfDepositsAsPercScale = calculatePercentage(
+            amount
         );
-        //do conversion and transfer
         uint256 amountOutputTokensEntitledTo = (
-            poolTotalValue.mul(userPercentageOfDeposits)
-        ).div(percScale);
+            poolTotalValue.mul(userPercentageOfDepositsAsPercScale)
+        ).div(percScale).div(100);
         poolOwnerBalance[msg.sender] = poolOwnerBalance[msg.sender].sub(amount);
-        poolTotalValue = poolTotalValue.sub(amount);
+        poolTotalDeposits = poolTotalDeposits.sub(amount);
+        poolTotalValue = poolTotalValue.sub(amountOutputTokensEntitledTo);
         _depositToken.transfer(msg.sender, amountOutputTokensEntitledTo);
         return true;
     }
