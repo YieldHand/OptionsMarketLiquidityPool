@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@openzeppelin/contracts": "^4.2.0",
+    "eth-gas-reporter": "^0.2.22",
     "prettier": "^2.3.2",
     "prettier-plugin-solidity": "^1.0.0-beta.17",
     "solhint": "^3.3.6",
