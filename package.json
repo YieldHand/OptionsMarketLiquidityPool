@@ -11,7 +11,9 @@
     "compile": "truffle compile",
     "migrate": "truffle migrate",
     "test": "truffle test --stacktrace",
-    "test_debug": "truffle test --debug"
+    "test_debug": "truffle test --debug",
+    "solhint": "./node_modules/.bin/solhint -f table contracts/*.sol contracts/**/*.sol",
+    "prettier:solidity": "./node_modules/.bin/prettier --write contracts/*.sol contracts/**/*.sol"
   },
   "repository": {
     "type": "git",
@@ -27,6 +29,10 @@
     "truffle": "^5.4.2"
   },
   "devDependencies": {
-    "@openzeppelin/contracts": "^4.2.0"
+    "@openzeppelin/contracts": "^4.2.0",
+    "prettier": "^2.3.2",
+    "prettier-plugin-solidity": "^1.0.0-beta.17",
+    "solhint": "^3.3.6",
+    "solhint-plugin-prettier": "0.0.5"
   }
 }
