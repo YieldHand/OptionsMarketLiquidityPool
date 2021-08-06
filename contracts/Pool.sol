@@ -123,7 +123,7 @@ contract LiquidityPool is ReentrancyGuard {
 
     //User withdraws their percentage of the pool and rewards
     function withdrawAll() public returns (bool) {
-        require(poolOwnerBalance[msg.sender] >= 0, "Insufficient funds");
+        require(poolOwnerBalance[msg.sender] > 0, "Insufficient funds");
         withdraw(poolOwnerBalance[msg.sender]);
         return true;
     }
