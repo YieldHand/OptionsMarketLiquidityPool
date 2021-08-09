@@ -49,4 +49,16 @@ contract('LiquidityPool tests', async ([alice, bob, admin, dev, minter]) => {
         assert.equal(await this.pool.poolTotalDeposits(), 3);
         assert.equal(await this.pool.poolTotalValue(), 3);
     });
+
+    it('ensure alice can withdrawAll remaining tokens', async () => {
+        // Alice withdraw all remaining tokens
+        await this.pool.withdrawAll({from: alice});
+
+        // assert that balances are ok
+        assert.equal(await this.token.balanceOf(this.pool.address), 0);
+        assert.equal(await this.token.balanceOf(alice), 10);
+        assert.equal(await this.pool.poolOwnerBalance(alice), 0);
+        assert.equal(await this.pool.poolTotalDeposits(), 0);
+        assert.equal(await this.pool.poolTotalValue(), 0);
+    });
 });
