@@ -80,6 +80,9 @@ module.exports = {
     reporter: 'eth-gas-reporter',
     reporterOptions : { excludeContracts: ['Migrations'] }
   },
+  plugins: [
+    "solidity-coverage"
+  ],
 
   // Configure your compilers
   compilers: {
