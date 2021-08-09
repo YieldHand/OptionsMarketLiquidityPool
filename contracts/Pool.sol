@@ -106,6 +106,8 @@ contract LiquidityPool is ReentrancyGuard {
             allLPsCanWithdraw,
             "allLPsCanWithdraw must be set to true for LPs to withdraw"
         );
+        require(amount > 0, "Insufficient amount");
+        require(poolOwnerBalance[msg.sender] >= amount, "Insufficient funds");
         uint256 userPercentageOfDepositsAsPercScale = calculatePercentage(
             amount
         );
@@ -121,7 +123,8 @@ contract LiquidityPool is ReentrancyGuard {
 
     //User withdraws their percentage of the pool and rewards
     function withdrawAll() public returns (bool) {
-        //User total Balance of the pool after the expiration of the pool
+        require(poolOwnerBalance[msg.sender] > 0, "Insufficient funds");
+        withdraw(poolOwnerBalance[msg.sender]);
         return true;
     }
 
